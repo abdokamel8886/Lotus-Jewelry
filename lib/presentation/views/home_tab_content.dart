@@ -179,7 +179,7 @@ class _TopProductsCarouselState extends State<_TopProductsCarousel> {
 
 }
 
-/// Single hero card: left grey (title, description, button), right white (image)
+/// Single hero card: responsive — on mobile column (image top, content below); on desktop row (text left, image right)
 class _HeroTopCard extends StatelessWidget {
   final Product product;
   final VoidCallback onView;
@@ -193,6 +193,12 @@ class _HeroTopCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isNarrow = MediaQuery.sizeOf(context).width < 500;
+    final padding = isNarrow ? 16.0 : 28.0;
+    final titleSize = isNarrow ? 18.0 : 24.0;
+    final descSize = isNarrow ? 12.0 : 14.0;
+    final priceSize = isNarrow ? 18.0 : 22.0;
+
     return Container(
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(20),
@@ -205,108 +211,213 @@ class _HeroTopCard extends StatelessWidget {
         ],
       ),
       clipBehavior: Clip.antiAlias,
-      child: Row(
-        children: [
-          Expanded(
-            flex: 5,
-            child: Container(
-              color: Colors.grey.shade100,
-              padding: const EdgeInsets.all(28),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (product.badge != null && product.badge!.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: Text(
-                        product.badge!,
-                        style: TextStyle(
-                          fontSize: 13,
-                          color: AppTheme.gold,
-                          fontWeight: FontWeight.w600,
-                        ),
+      child: isNarrow
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Image on top: fixed aspect ratio so no huge empty background
+                AspectRatio(
+                  aspectRatio: 4 / 3,
+                  child: Container(
+                    color: Colors.grey.shade50,
+                    child: Image.network(
+                      product.imageUrl,
+                      fit: BoxFit.contain,
+                      errorBuilder: (_, __, ___) => Container(
+                        color: Colors.grey.shade100,
+                        child: Icon(Icons.image, size: 48, color: Colors.grey.shade400),
                       ),
+                      loadingBuilder: (context, child, progress) {
+                        if (progress == null) return child;
+                        return const Center(child: CircularProgressIndicator());
+                      },
                     ),
-                  Text(
-                    product.name,
-                    style: const TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: AppTheme.charcoal,
-                      letterSpacing: -0.5,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
-                  const SizedBox(height: 12),
-                  Text(
-                    product.description,
-                    style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.grey.shade700,
-                      height: 1.45,
-                    ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
+                ),
+                Container(
+                  color: Colors.grey.shade100,
+                  padding: EdgeInsets.all(padding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '\$${product.finalPrice.toStringAsFixed(0)}',
-                        style: const TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.gold,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      SizedBox(
-                        height: 44,
-                        child: ElevatedButton(
-                          onPressed: onView,
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: AppTheme.charcoal,
-                            foregroundColor: Colors.white,
+                      if (product.badge != null && product.badge!.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(bottom: 6),
+                          child: Text(
+                            product.badge!,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: AppTheme.gold,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
-                          child: const Text('View'),
                         ),
+                      Text(
+                        product.name,
+                        style: TextStyle(
+                          fontSize: titleSize,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.charcoal,
+                          letterSpacing: -0.5,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        product.description,
+                        style: TextStyle(
+                          fontSize: descSize,
+                          color: Colors.grey.shade700,
+                          height: 1.4,
+                        ),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      const SizedBox(height: 12),
+                      Row(
+                        children: [
+                          Text(
+                            '\$${product.finalPrice.toStringAsFixed(0)}',
+                            style: TextStyle(
+                              fontSize: priceSize,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.gold,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          SizedBox(
+                            height: 40,
+                            child: ElevatedButton(
+                              onPressed: onView,
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppTheme.charcoal,
+                                foregroundColor: Colors.white,
+                              ),
+                              child: const Text('View'),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 8),
+                      TextButton(
+                        onPressed: onGoToCatalog,
+                        style: TextButton.styleFrom(
+                          padding: EdgeInsets.zero,
+                          minimumSize: Size.zero,
+                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                        ),
+                        child: const Text('GO TO CATALOG'),
                       ),
                     ],
                   ),
-                  const SizedBox(height: 12),
-                  TextButton(
-                    onPressed: onGoToCatalog,
-                    child: const Text('GO TO CATALOG'),
-                  ),
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 4,
-            child: Container(
-              color: Colors.white,
-              child: Image.network(
-                product.imageUrl,
-                fit: BoxFit.contain,
-                errorBuilder: (_, __, ___) => Container(
-                  color: Colors.grey.shade100,
-                  child: Icon(Icons.image, size: 64, color: Colors.grey.shade400),
                 ),
-                loadingBuilder: (context, child, progress) {
-                  if (progress == null) return child;
-                  return Container(
-                    color: Colors.grey.shade50,
-                    child: const Center(child: CircularProgressIndicator()),
-                  );
-                },
-              ),
+              ],
+            )
+          : Row(
+              children: [
+                Expanded(
+                  flex: 5,
+                  child: Container(
+                    color: Colors.grey.shade100,
+                    padding: EdgeInsets.all(padding),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (product.badge != null && product.badge!.isNotEmpty)
+                          Padding(
+                            padding: const EdgeInsets.only(bottom: 8),
+                            child: Text(
+                              product.badge!,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: AppTheme.gold,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        Text(
+                          product.name,
+                          style: TextStyle(
+                            fontSize: titleSize,
+                            fontWeight: FontWeight.bold,
+                            color: AppTheme.charcoal,
+                            letterSpacing: -0.5,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          product.description,
+                          style: TextStyle(
+                            fontSize: descSize,
+                            color: Colors.grey.shade700,
+                            height: 1.45,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Text(
+                              '\$${product.finalPrice.toStringAsFixed(0)}',
+                              style: TextStyle(
+                                fontSize: priceSize,
+                                fontWeight: FontWeight.bold,
+                                color: AppTheme.gold,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            SizedBox(
+                              height: 44,
+                              child: ElevatedButton(
+                                onPressed: onView,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: AppTheme.charcoal,
+                                  foregroundColor: Colors.white,
+                                ),
+                                child: const Text('View'),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 12),
+                        TextButton(
+                          onPressed: onGoToCatalog,
+                          child: const Text('GO TO CATALOG'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                // Image: constrained aspect ratio so no huge empty area
+                Expanded(
+                  flex: 4,
+                  child: AspectRatio(
+                    aspectRatio: 1,
+                    child: Container(
+                      color: Colors.grey.shade50,
+                      child: Image.network(
+                        product.imageUrl,
+                        fit: BoxFit.contain,
+                        errorBuilder: (_, __, ___) => Container(
+                          color: Colors.grey.shade100,
+                          child: Icon(Icons.image, size: 64, color: Colors.grey.shade400),
+                        ),
+                        loadingBuilder: (context, child, progress) {
+                          if (progress == null) return child;
+                          return const Center(child: CircularProgressIndicator());
+                        },
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -341,7 +452,7 @@ class _HomeProductGrid extends StatelessWidget {
             physics: const NeverScrollableScrollPhysics(),
             gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: crossAxisCount,
-              childAspectRatio: 0.68,
+              childAspectRatio: 0.62,
               crossAxisSpacing: 16,
               mainAxisSpacing: 16,
             ),
@@ -363,7 +474,7 @@ class _HomeProductGrid extends StatelessWidget {
   }
 }
 
-/// Compact card: square image, bold title, short description (like reference image)
+/// Compact card: image, title, description, price, category, discount, rating
 class _CompactProductCard extends StatelessWidget {
   final Product product;
   final VoidCallback onTap;
@@ -389,48 +500,138 @@ class _CompactProductCard extends StatelessWidget {
           children: [
             Expanded(
               flex: 5,
-              child: Image.network(
-                product.imageUrl,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  color: Colors.grey.shade200,
-                  child: Icon(Icons.image, color: Colors.grey.shade400),
-                ),
-                loadingBuilder: (context, child, progress) {
-                  if (progress == null) return child;
-                  return Container(
-                    color: Colors.grey.shade100,
-                    child: const Center(child: CircularProgressIndicator()),
-                  );
-                },
+              child: Stack(
+                children: [
+                  Image.network(
+                    product.imageUrl,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    errorBuilder: (_, __, ___) => Container(
+                      color: Colors.grey.shade200,
+                      child: Icon(Icons.image, color: Colors.grey.shade400),
+                    ),
+                    loadingBuilder: (context, child, progress) {
+                      if (progress == null) return child;
+                      return Container(
+                        color: Colors.grey.shade100,
+                        child: const Center(child: CircularProgressIndicator()),
+                      );
+                    },
+                  ),
+                  if (product.discount > 0)
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: Colors.red,
+                          borderRadius: BorderRadius.circular(6),
+                        ),
+                        child: Text(
+                          '-${product.discount}%',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
               ),
             ),
             Expanded(
-              flex: 2,
+              flex: 3,
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 10, 12, 12),
+                padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      product.name,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w600,
-                        fontSize: 14,
-                      ),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        if (product.categoryDisplay.isNotEmpty)
+                          Text(
+                            product.categoryDisplay,
+                            style: TextStyle(
+                              fontSize: 11,
+                              color: AppTheme.gold,
+                              fontWeight: FontWeight.w600,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        if (product.categoryDisplay.isNotEmpty) const SizedBox(height: 2),
+                        Text(
+                          product.name,
+                          style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          product.description,
+                          style: TextStyle(
+                            fontSize: 11,
+                            color: Colors.grey.shade600,
+                          ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 4),
-                    Text(
-                      product.description,
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: Colors.grey.shade600,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.baseline,
+                          textBaseline: TextBaseline.alphabetic,
+                          children: [
+                            Text(
+                              '\$${product.finalPrice.toStringAsFixed(0)}',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 15,
+                                color: AppTheme.gold,
+                              ),
+                            ),
+                            if (product.discount > 0) ...[
+                              const SizedBox(width: 6),
+                              Text(
+                                '\$${product.price.toStringAsFixed(0)}',
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.grey.shade500,
+                                  decoration: TextDecoration.lineThrough,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        if (product.ratings != null) ...[
+                          const SizedBox(height: 2),
+                          Row(
+                            children: [
+                              Icon(Icons.star_rounded, size: 12, color: Colors.amber.shade700),
+                              const SizedBox(width: 2),
+                              Text(
+                                product.ratings!.toStringAsFixed(1),
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.grey.shade600,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ],
                     ),
                   ],
                 ),

@@ -24,22 +24,19 @@ class LoginView extends ConsumerWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               const SizedBox(height: 24),
-              Icon(
-                Icons.diamond,
-                size: 56,
-                color: AppTheme.gold,
+              Center(
+                child: Image.asset(
+                  AppConstants.logoAsset,
+                  height: 80,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => Icon(
+                    Icons.diamond,
+                    size: 56,
+                    color: AppTheme.gold,
+                  ),
+                ),
               ),
               const SizedBox(height: 24),
-              Text(
-                AppConstants.appName,
-                style: const TextStyle(
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: -0.5,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 8),
               Text(
                 'Sign in to continue',
                 style: TextStyle(

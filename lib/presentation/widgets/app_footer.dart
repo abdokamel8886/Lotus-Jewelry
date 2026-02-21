@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../core/constants/app_constants.dart';
 import '../../core/theme/app_theme.dart';
 
 /// Website-style footer with dummy data
@@ -13,6 +14,13 @@ class AppFooter extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 24),
       child: Column(
         children: [
+          Image.asset(
+            AppConstants.logoAsset,
+            height: 40,
+            fit: BoxFit.contain,
+            errorBuilder: (_, __, ___) => const SizedBox.shrink(),
+          ),
+          const SizedBox(height: 24),
           Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,

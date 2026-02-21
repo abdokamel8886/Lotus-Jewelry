@@ -31,7 +31,7 @@ class GoldApp extends StatelessWidget {
       title: AppConstants.appName,
       theme: AppTheme.lightTheme,
       // Initial route - use routeAdmin for admin, routeHome for shop, routeLogin for auth
-      initialRoute: AppConstants.routeAdmin,
+      initialRoute: AppConstants.routeHome,
       onGenerateRoute: AppRouter.onGenerateRoute,
     );
   }

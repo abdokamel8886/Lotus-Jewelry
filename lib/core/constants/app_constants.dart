@@ -3,7 +3,8 @@ class AppConstants {
   AppConstants._();
 
   // App info
-  static const String appName = 'Lotus Jewelrys';
+  static const String appName = 'Lotus Jewelry';
+  static const String logoAsset = 'assets/logo.png';
 
   // Routes
   static const String routeLogin = '/login';

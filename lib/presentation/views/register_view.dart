@@ -32,6 +32,19 @@ class RegisterView extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              Center(
+                child: Image.asset(
+                  AppConstants.logoAsset,
+                  height: 56,
+                  fit: BoxFit.contain,
+                  errorBuilder: (_, __, ___) => Icon(
+                    Icons.diamond,
+                    size: 48,
+                    color: AppTheme.gold,
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
               Text(
                 'Join us',
                 style: const TextStyle(

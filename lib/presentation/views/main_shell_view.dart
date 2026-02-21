@@ -31,14 +31,28 @@ class _MainShellViewState extends ConsumerState<MainShellView> {
         backgroundColor: Colors.white,
         foregroundColor: AppTheme.charcoal,
         elevation: 0,
-        title: Text(
-          'Jewellery',
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w600,
-            color: AppTheme.charcoal,
-            letterSpacing: -0.5,
-          ),
+        title:
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Image.asset(
+              AppConstants.logoAsset,
+              height: 48,
+              fit: BoxFit.contain,
+              errorBuilder: (_, __, ___) => SizedBox.shrink(), // لو الصورة مش موجودة
+            ),
+            SizedBox(width: 8), // مسافة بين الصورة والنص
+            const Text(
+              'Lotus Jewelry',
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w600,
+                color: AppTheme.charcoal,
+                letterSpacing: -0.5,
+              ),
+            ),
+          ],
         ),
         actions: [
           IconButton(
