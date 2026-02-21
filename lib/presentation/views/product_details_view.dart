@@ -37,8 +37,13 @@ class ProductDetailsView extends ConsumerWidget {
           if (product == null) {
             return const Center(child: Text('Product not found'));
           }
+          final similarState = ref.watch(similarProductsProvider((
+            category: product.category,
+            excludeId: product.id,
+          )));
           return _ProductDetailsContent(
             product: product,
+            similarProductsState: similarState,
             onAddToCart: (selectedSize) {
               if (!product.inStock) return;
               cartRepo.addToCart(CartItem(
@@ -90,11 +95,13 @@ class ProductDetailsView extends ConsumerWidget {
 
 class _ProductDetailsContent extends StatefulWidget {
   final Product product;
+  final AsyncValue<List<Product>> similarProductsState;
   final void Function(String? selectedSize) onAddToCart;
   final void Function(String? selectedSize) onBuyNow;
 
   const _ProductDetailsContent({
     required this.product,
+    required this.similarProductsState,
     required this.onAddToCart,
     required this.onBuyNow,
   });
@@ -315,11 +322,153 @@ class _ProductDetailsContentState extends State<_ProductDetailsContent> {
                 _SectionTitle(title: 'Design Details'),
                 const SizedBox(height: 12),
                 _DesignDetailsCard(product: product),
+                const SizedBox(height: 32),
+                _SectionTitle(title: 'You May Also Like'),
+                const SizedBox(height: 12),
+                _YouMayAlsoLike(similarProductsState: widget.similarProductsState),
                 const SizedBox(height: 40),
               ],
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _YouMayAlsoLike extends StatelessWidget {
+  final AsyncValue<List<Product>> similarProductsState;
+
+  const _YouMayAlsoLike({required this.similarProductsState});
+
+  @override
+  Widget build(BuildContext context) {
+    return similarProductsState.when(
+      data: (products) {
+        if (products.isEmpty) return const SizedBox.shrink();
+        return SizedBox(
+          height: 220,
+          child: ListView.separated(
+            scrollDirection: Axis.horizontal,
+            itemCount: products.length,
+            separatorBuilder: (_, __) => const SizedBox(width: 12),
+            itemBuilder: (context, index) {
+              final p = products[index];
+              return _SimilarProductCard(
+                product: p,
+                onTap: () => Navigator.of(context).pushNamed(
+                  AppConstants.routeProductDetails,
+                  arguments: p.id,
+                ),
+              );
+            },
+          ),
+        );
+      },
+      loading: () => const SizedBox(
+        height: 220,
+        child: Center(child: CircularProgressIndicator()),
+      ),
+      error: (_, __) => const SizedBox.shrink(),
+    );
+  }
+}
+
+class _SimilarProductCard extends StatelessWidget {
+  final Product product;
+  final VoidCallback onTap;
+
+  const _SimilarProductCard({required this.product, required this.onTap});
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 140,
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(12),
+          side: BorderSide(color: Colors.grey.shade200),
+        ),
+        child: InkWell(
+          onTap: onTap,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Expanded(
+                child: Stack(
+                  fit: StackFit.expand,
+                  children: [
+                    Image.network(
+                      product.imageUrl,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        color: Colors.grey.shade200,
+                        child: Icon(Icons.image, color: Colors.grey.shade400),
+                      ),
+                      loadingBuilder: (context, child, progress) {
+                        if (progress == null) return child;
+                        return Container(
+                          color: Colors.grey.shade100,
+                          child: const Center(child: CircularProgressIndicator()),
+                        );
+                      },
+                    ),
+                    if (product.discount > 0)
+                      Positioned(
+                        top: 6,
+                        left: 6,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 4),
+                          decoration: BoxDecoration(
+                            color: Colors.red,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            '-${product.discount}%',
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(10, 8, 10, 10),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      product.name,
+                      style: const TextStyle(
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                        color: AppTheme.charcoal,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      '\$${product.finalPrice.toStringAsFixed(0)}',
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        color: AppTheme.gold,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

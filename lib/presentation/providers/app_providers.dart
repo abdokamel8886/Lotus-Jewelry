@@ -43,6 +43,14 @@ final homeProductsProvider = FutureProvider<List<Product>>((ref) async {
   return repo.getProducts();
 });
 
+/// Similar products (same category, excluding one product) for "You May Also Like"
+final similarProductsProvider =
+    FutureProvider.family<List<Product>, ({String category, String excludeId})>((ref, params) async {
+  final repo = ref.read(productRepositoryProvider);
+  final list = await repo.getProducts(category: params.category);
+  return list.where((p) => p.id != params.excludeId).take(10).toList();
+});
+
 /// Riverpod providers - Dependency injection
 /// Binds abstractions (interfaces) to implementations
 

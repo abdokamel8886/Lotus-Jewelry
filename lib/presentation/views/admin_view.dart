@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/constants/admin_random_lists.dart';
 import '../../core/theme/app_theme.dart';
 import '../providers/app_providers.dart';
 
-/// Admin page - upload products to Firebase Realtime Database
+/// Admin – minimal form: name, desc, price, discount, category, 3 images; rest from dropdowns (edit admin_random_lists.dart).
 class AdminView extends ConsumerStatefulWidget {
   const AdminView({super.key});
 
@@ -17,44 +18,36 @@ class _AdminViewState extends ConsumerState<AdminView> {
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
-  final _imagesController = TextEditingController(); // one URL per line
-  final _colorController = TextEditingController();
-  final _materialController = TextEditingController();
   final _discountController = TextEditingController(text: '0');
-  final _ratingsController = TextEditingController();
-  final _sizeController = TextEditingController();
-  final _stockController = TextEditingController(text: '10');
-  final _weightController = TextEditingController();
-  final _lengthController = TextEditingController();
-  final _tagsController = TextEditingController(); // comma separated
-  final _badgeController = TextEditingController();
-  final _careController = TextEditingController();
-  final _brandController = TextEditingController();
-  final _deliveryController = TextEditingController();
+  final _image1Controller = TextEditingController();
+  final _image2Controller = TextEditingController();
+  final _image3Controller = TextEditingController();
 
+  String _category = AdminRandomLists.categories.first;
+  String? _selectedColor;
+  String? _selectedMaterial;
+  String? _selectedSize;
+  String? _selectedCare;
+  String? _selectedBrand;
+  String? _selectedDelivery;
+  String? _selectedTag;
+  String? _selectedBadge;
+  String? _selectedOccasion;
+  String? _selectedGender;
+  String? _selectedStockStatus;
+  String? _selectedCollection;
   bool _inStock = true;
   bool _isUploading = false;
-  String _category = 'rings';
 
   @override
   void dispose() {
     _nameController.dispose();
     _descriptionController.dispose();
     _priceController.dispose();
-    _imagesController.dispose();
-    _colorController.dispose();
-    _materialController.dispose();
     _discountController.dispose();
-    _ratingsController.dispose();
-    _sizeController.dispose();
-    _stockController.dispose();
-    _weightController.dispose();
-    _lengthController.dispose();
-    _tagsController.dispose();
-    _badgeController.dispose();
-    _careController.dispose();
-    _brandController.dispose();
-    _deliveryController.dispose();
+    _image1Controller.dispose();
+    _image2Controller.dispose();
+    _image3Controller.dispose();
     super.dispose();
   }
 
@@ -64,47 +57,62 @@ class _AdminViewState extends ConsumerState<AdminView> {
     setState(() => _isUploading = true);
 
     try {
-      final imagesStr = _imagesController.text.trim();
-      final images = imagesStr.isEmpty
-          ? <String>[]
-          : imagesStr.split(RegExp(r'[\n,]+')).map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+      final images = <String>[
+        _image1Controller.text.trim(),
+        _image2Controller.text.trim(),
+        _image3Controller.text.trim(),
+      ].where((e) => e.isNotEmpty).toList();
 
-      final tagsStr = _tagsController.text.trim();
-      final tags = tagsStr.isEmpty
-          ? <String>[]
-          : tagsStr.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+      final inStock = _selectedStockStatus != 'Out of Stock';
+      final stock = _selectedStockStatus == 'Low Stock'
+          ? 3
+          : (_selectedStockStatus == 'Pre-order' ? 0 : 10);
 
       final data = <String, dynamic>{
         'name': _nameController.text.trim(),
         'description': _descriptionController.text.trim(),
         'price': double.tryParse(_priceController.text.trim()) ?? 0,
-        'images': images,
-        'category': _category,
-        'inStock': _inStock,
         'discount': int.tryParse(_discountController.text.trim()) ?? 0,
-        'stock': int.tryParse(_stockController.text.trim()) ?? 0,
+        'category': _category,
+        'images': images,
+        'inStock': inStock,
+        'stock': stock,
       };
 
-      if (_colorController.text.trim().isNotEmpty) data['color'] = _colorController.text.trim();
-      if (_materialController.text.trim().isNotEmpty) data['material'] = _materialController.text.trim();
-      if (_ratingsController.text.trim().isNotEmpty) {
-        data['ratings'] = double.tryParse(_ratingsController.text.trim());
+      if (_selectedColor != null && _selectedColor!.isNotEmpty) {
+        data['color'] = _selectedColor;
       }
-      final sizeStr = _sizeController.text.trim();
-      if (sizeStr.isNotEmpty) {
-        final sizes = sizeStr.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
-        data['size'] = sizes.length == 1 ? sizes.first : sizes;
+      if (_selectedMaterial != null && _selectedMaterial!.isNotEmpty) {
+        data['material'] = _selectedMaterial;
       }
-      if (_weightController.text.trim().isNotEmpty) {
-        final w = num.tryParse(_weightController.text.trim());
-        if (w != null) data['weight'] = w;
+      if (_selectedSize != null && _selectedSize!.isNotEmpty) {
+        final sizeOpts = AdminRandomLists.sizeOptionsForCategory(_category);
+        data['size'] = sizeOpts;
       }
-      if (_lengthController.text.trim().isNotEmpty) data['length'] = _lengthController.text.trim();
-      if (tags.isNotEmpty) data['tags'] = tags;
-      if (_badgeController.text.trim().isNotEmpty) data['badge'] = _badgeController.text.trim();
-      if (_careController.text.trim().isNotEmpty) data['care'] = _careController.text.trim();
-      if (_brandController.text.trim().isNotEmpty) data['brand'] = _brandController.text.trim();
-      if (_deliveryController.text.trim().isNotEmpty) data['delivery'] = _deliveryController.text.trim();
+      if (_selectedCare != null && _selectedCare!.isNotEmpty) {
+        data['care'] = _selectedCare;
+      }
+      if (_selectedBrand != null && _selectedBrand!.isNotEmpty) {
+        data['brand'] = _selectedBrand;
+      }
+      if (_selectedDelivery != null && _selectedDelivery!.isNotEmpty) {
+        data['delivery'] = _selectedDelivery;
+      }
+      if (_selectedTag != null && _selectedTag!.isNotEmpty) {
+        data['tags'] = [_selectedTag!];
+      }
+      if (_selectedBadge != null && _selectedBadge!.isNotEmpty) {
+        data['badge'] = _selectedBadge;
+      }
+      if (_selectedOccasion != null && _selectedOccasion!.isNotEmpty) {
+        data['occasion'] = _selectedOccasion;
+      }
+      if (_selectedGender != null && _selectedGender!.isNotEmpty) {
+        data['gender'] = _selectedGender;
+      }
+      if (_selectedCollection != null && _selectedCollection!.isNotEmpty) {
+        data['collection'] = _selectedCollection;
+      }
 
       final db = ref.read(firebaseRealtimeDbManagerProvider);
       final key = await db.addProduct(data);
@@ -138,29 +146,33 @@ class _AdminViewState extends ConsumerState<AdminView> {
     _nameController.clear();
     _descriptionController.clear();
     _priceController.clear();
-    _imagesController.clear();
-    setState(() => _category = 'rings');
-    _colorController.clear();
-    _materialController.clear();
     _discountController.text = '0';
-    _ratingsController.clear();
-    _sizeController.clear();
-    _stockController.text = '10';
-    _weightController.clear();
-    _lengthController.clear();
-    _tagsController.clear();
-    _badgeController.clear();
-    _careController.clear();
-    _brandController.clear();
-    _deliveryController.clear();
+    _image1Controller.clear();
+    _image2Controller.clear();
+    _image3Controller.clear();
     setState(() {
-      _category = 'rings';
+      _category = AdminRandomLists.categories.first;
+      _selectedColor = null;
+      _selectedMaterial = null;
+      _selectedSize = null;
+      _selectedCare = null;
+      _selectedBrand = null;
+      _selectedDelivery = null;
+      _selectedTag = null;
+      _selectedBadge = null;
+      _selectedOccasion = null;
+      _selectedGender = null;
+      _selectedStockStatus = null;
+      _selectedCollection = null;
       _inStock = true;
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    final sizeOptions = AdminRandomLists.sizeOptionsForCategory(_category);
+    final tagOptions = AdminRandomLists.tagsForCategory(_category);
+
     return Scaffold(
       backgroundColor: AppTheme.offWhite,
       appBar: AppBar(
@@ -185,7 +197,7 @@ class _AdminViewState extends ConsumerState<AdminView> {
               TextFormField(
                 controller: _nameController,
                 decoration: const InputDecoration(
-                  labelText: 'Product name *',
+                  labelText: 'Name *',
                   border: OutlineInputBorder(),
                 ),
                 validator: (v) => (v == null || v.trim().isEmpty) ? 'Required' : null,
@@ -213,7 +225,7 @@ class _AdminViewState extends ConsumerState<AdminView> {
                       ),
                       validator: (v) {
                         if (v == null || v.trim().isEmpty) return 'Required';
-                        if (double.tryParse(v.trim()) == null) return 'Invalid number';
+                        if (double.tryParse(v.trim()) == null) return 'Invalid';
                         return null;
                       },
                     ),
@@ -232,163 +244,87 @@ class _AdminViewState extends ConsumerState<AdminView> {
                 ],
               ),
               const SizedBox(height: 16),
-              TextFormField(
-                controller: _imagesController,
-                maxLines: 3,
+              DropdownButtonFormField<String>(
+                value: _category,
                 decoration: const InputDecoration(
-                  labelText: 'Image URLs (one per line or comma-separated)',
+                  labelText: 'Category *',
+                  border: OutlineInputBorder(),
+                ),
+                items: AdminRandomLists.categories
+                    .map((c) => DropdownMenuItem(
+                          value: c,
+                          child: Text(c[0].toUpperCase() + c.substring(1)),
+                        ))
+                    .toList(),
+                onChanged: (v) {
+                  if (v != null) {
+                    setState(() {
+                      _category = v;
+                      _selectedSize = null;
+                      _selectedTag = null;
+                    });
+                  }
+                },
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _image1Controller,
+                decoration: const InputDecoration(
+                  labelText: 'Image 1 URL',
                   hintText: 'https://...',
                   border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _category,
-                decoration: const InputDecoration(
-                  labelText: 'Category',
-                  border: OutlineInputBorder(),
-                ),
-                items: const [
-                  DropdownMenuItem(value: 'rings', child: Text('Rings')),
-                  DropdownMenuItem(value: 'necklaces', child: Text('Necklaces')),
-                  DropdownMenuItem(value: 'bracelets', child: Text('Bracelets')),
-                  DropdownMenuItem(value: 'earrings', child: Text('Earrings')),
-                  DropdownMenuItem(value: 'watches', child: Text('Watches')),
-                ],
-                onChanged: (v) {
-                  if (v != null) setState(() => _category = v);
-                },
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _colorController,
-                      decoration: const InputDecoration(
-                        labelText: 'Color',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _materialController,
-                      decoration: const InputDecoration(
-                        labelText: 'Material',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _stockController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'Stock',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _ratingsController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'Ratings (e.g. 4.5)',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: _sizeController,
-                      decoration: const InputDecoration(
-                        labelText: 'Sizes (comma-separated: 14, 15, 16)',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _weightController,
-                      keyboardType: TextInputType.number,
-                      decoration: const InputDecoration(
-                        labelText: 'Weight (g)',
-                        border: OutlineInputBorder(),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               TextFormField(
-                controller: _lengthController,
+                controller: _image2Controller,
                 decoration: const InputDecoration(
-                  labelText: 'Length (e.g. 45cm)',
+                  labelText: 'Image 2 URL',
                   border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               TextFormField(
-                controller: _tagsController,
+                controller: _image3Controller,
                 decoration: const InputDecoration(
-                  labelText: 'Tags (comma-separated)',
-                  hintText: 'gold, ring, luxury',
+                  labelText: 'Image 3 URL',
                   border: OutlineInputBorder(),
                 ),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _badgeController,
-                decoration: const InputDecoration(
-                  labelText: 'Badge (e.g. Best Seller)',
-                  border: OutlineInputBorder(),
+              const SizedBox(height: 20),
+              Text(
+                'Optional (from lists – edit lib/core/constants/admin_random_lists.dart)',
+                style: TextStyle(
+                  fontSize: 12,
+                  color: Colors.grey.shade600,
                 ),
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _careController,
-                decoration: const InputDecoration(
-                  labelText: 'Care (e.g. Clean with soft cloth)',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _brandController,
-                decoration: const InputDecoration(
-                  labelText: 'Brand (e.g. L\'azurde)',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _deliveryController,
-                decoration: const InputDecoration(
-                  labelText: 'Delivery (e.g. 3-5 business days)',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              const SizedBox(height: 16),
-              SwitchListTile(
-                title: const Text('In stock'),
-                value: _inStock,
-                onChanged: (v) => setState(() => _inStock = v),
-              ),
+              const SizedBox(height: 12),
+              _dropdown('Color', _selectedColor, AdminRandomLists.colors, (v) => setState(() => _selectedColor = v)),
+              const SizedBox(height: 12),
+              _dropdown('Material', _selectedMaterial, AdminRandomLists.materials, (v) => setState(() => _selectedMaterial = v)),
+              if (sizeOptions.isNotEmpty) ...[
+                const SizedBox(height: 12),
+                _dropdown('Size / Length', _selectedSize, sizeOptions, (v) => setState(() => _selectedSize = v)),
+              ],
+              const SizedBox(height: 12),
+              _dropdown('Care', _selectedCare, AdminRandomLists.care, (v) => setState(() => _selectedCare = v)),
+              const SizedBox(height: 12),
+              _dropdown('Brand', _selectedBrand, AdminRandomLists.brands, (v) => setState(() => _selectedBrand = v)),
+              const SizedBox(height: 12),
+              _dropdown('Delivery', _selectedDelivery, AdminRandomLists.delivery, (v) => setState(() => _selectedDelivery = v)),
+              const SizedBox(height: 12),
+              _dropdown('Tag', _selectedTag, tagOptions, (v) => setState(() => _selectedTag = v)),
+              const SizedBox(height: 12),
+              _dropdown('Badge', _selectedBadge, AdminRandomLists.badges, (v) => setState(() => _selectedBadge = v)),
+              const SizedBox(height: 12),
+              _dropdown('Occasion', _selectedOccasion, AdminRandomLists.occasions, (v) => setState(() => _selectedOccasion = v)),
+              const SizedBox(height: 12),
+              _dropdown('Gender', _selectedGender, AdminRandomLists.genders, (v) => setState(() => _selectedGender = v)),
+              const SizedBox(height: 12),
+              _dropdown('Stock status', _selectedStockStatus, AdminRandomLists.stockStatus, (v) => setState(() => _selectedStockStatus = v)),
+              const SizedBox(height: 12),
+              _dropdown('Collection', _selectedCollection, AdminRandomLists.collections, (v) => setState(() => _selectedCollection = v)),
               const SizedBox(height: 24),
               SizedBox(
                 height: 52,
@@ -412,6 +348,26 @@ class _AdminViewState extends ConsumerState<AdminView> {
           ),
         ),
       ),
+    );
+  }
+
+  Widget _dropdown(
+    String label,
+    String? value,
+    List<String> options,
+    ValueChanged<String?> onChanged,
+  ) {
+    return DropdownButtonFormField<String>(
+      value: value ?? (options.isNotEmpty ? null : null),
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
+      items: [
+        const DropdownMenuItem<String>(value: null, child: Text('— None —')),
+        ...options.map((o) => DropdownMenuItem(value: o, child: Text(o))),
+      ],
+      onChanged: onChanged,
     );
   }
 }
