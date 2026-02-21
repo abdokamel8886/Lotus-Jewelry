@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/navigation/app_navigator.dart';
 import '../../core/theme/app_theme.dart';
 import '../../domain/entities/category.dart';
 import '../../domain/entities/product.dart';
@@ -58,7 +59,7 @@ class HomeView extends ConsumerWidget {
                   ),
               ],
             ),
-            onPressed: () => Navigator.of(context).pushNamed(AppConstants.routeCart),
+            onPressed: () => AppNavigator.goCart(context),
           ),
         ],
       ),
@@ -340,10 +341,7 @@ class _ProductGrid extends StatelessWidget {
               final product = products[index];
               return ProductCard(
                 product: product,
-                onTap: () => Navigator.of(context).pushNamed(
-                  AppConstants.routeProductDetails,
-                  arguments: product.id,
-                ),
+                onTap: () => AppNavigator.goProductDetails(context, product.id),
               );
             },
           ),

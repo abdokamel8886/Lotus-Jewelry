@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/navigation/app_navigator.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/services/firebase_auth_manager.dart';
 import '../providers/app_providers.dart';
@@ -80,7 +81,7 @@ class _AuthViewState extends ConsumerState<AuthView> {
           children: [
             Image.asset(
               AppConstants.logoAsset,
-              height: 48,
+              height: 80,
               fit: BoxFit.contain,
               errorBuilder: (_, __, ___) => const SizedBox.shrink(),
             ),
@@ -102,7 +103,7 @@ class _AuthViewState extends ConsumerState<AuthView> {
             children: [
               IconButton(
                 icon: Icon(Icons.shopping_bag_outlined, color: AppTheme.charcoal),
-                onPressed: () => Navigator.of(context).pushNamed(AppConstants.routeCart),
+                onPressed: () => AppNavigator.goCart(context),
               ),
               if (cartRepo.itemCount > 0)
                 Positioned(
@@ -150,7 +151,7 @@ class _AuthViewState extends ConsumerState<AuthView> {
                   label: 'Home',
                   onTap: () {
                     ref.read(mainShellTabIndexProvider.notifier).state = 0;
-                    Navigator.of(context).pushNamedAndRemoveUntil(AppConstants.routeHome, (r) => false);
+                    AppNavigator.goHome(context);
                   },
                 ),
                 _AuthTabChip(
@@ -158,7 +159,7 @@ class _AuthViewState extends ConsumerState<AuthView> {
                   label: 'Categories',
                   onTap: () {
                     ref.read(mainShellTabIndexProvider.notifier).state = 1;
-                    Navigator.of(context).pushNamedAndRemoveUntil(AppConstants.routeHome, (r) => false);
+                    AppNavigator.goHome(context);
                   },
                 ),
                 _AuthTabChip(
@@ -166,7 +167,7 @@ class _AuthViewState extends ConsumerState<AuthView> {
                   label: 'Orders',
                   onTap: () {
                     ref.read(mainShellTabIndexProvider.notifier).state = 2;
-                    Navigator.of(context).pushNamedAndRemoveUntil(AppConstants.routeHome, (r) => false);
+                    AppNavigator.goHome(context);
                   },
                 ),
               ],
@@ -205,11 +206,11 @@ class _AuthViewState extends ConsumerState<AuthView> {
                             _selectedIndex == 0
                                 ? _LoginForm(
                                     inputDecoration: _inputDecoration,
-                                    onSuccess: () => Navigator.of(context).pushReplacementNamed(AppConstants.routeHome),
+                                    onSuccess: () => AppNavigator.goHome(context),
                                   )
                                 : _RegisterForm(
                                     inputDecoration: _inputDecoration,
-                                    onSuccess: () => Navigator.of(context).pushReplacementNamed(AppConstants.routeHome),
+                                    onSuccess: () => AppNavigator.goHome(context),
                                   ),
                             const SizedBox(height: 24),
                             Row(

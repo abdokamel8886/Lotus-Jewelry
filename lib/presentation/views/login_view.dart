@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/navigation/app_navigator.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/services/firebase_auth_manager.dart';
 import '../providers/app_providers.dart';
 import '../viewmodels/login_viewmodel.dart';
+import 'auth_view.dart';
 
 /// Login — premium auth layout with card, refined inputs, and social options
 class LoginView extends ConsumerWidget {
@@ -247,8 +249,8 @@ class LoginView extends ConsumerWidget {
                           style: TextStyle(color: Colors.grey.shade600, fontSize: 15),
                         ),
                         TextButton(
-                          onPressed: () => Navigator.of(context).pushReplacementNamed(
-                            AppConstants.routeRegister,
+                          onPressed: () => Navigator.of(context).pushReplacement(
+                            MaterialPageRoute(builder: (_) => const AuthView(initialIndex: 1)),
                           ),
                           style: TextButton.styleFrom(
                             foregroundColor: AppTheme.gold,
@@ -284,8 +286,12 @@ class LoginView extends ConsumerWidget {
     if (context.mounted) viewModel.setLoading(false);
     if (context.mounted) {
       switch (result) {
-        case AuthSuccess():
-          Navigator.of(context).pushReplacementNamed(AppConstants.routeHome);
+        case AuthSuccess(:final user):
+          if (user?.email?.trim().toLowerCase() == AppConstants.adminEmail.toLowerCase()) {
+            AppNavigator.replaceWithAdmin(context);
+          } else {
+            AppNavigator.replaceWithHome(context);
+          }
         case AuthFailure(:final message):
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
@@ -305,8 +311,12 @@ class LoginView extends ConsumerWidget {
     if (context.mounted) viewModel.setLoading(false);
     if (context.mounted) {
       switch (result) {
-        case AuthSuccess():
-          Navigator.of(context).pushReplacementNamed(AppConstants.routeHome);
+        case AuthSuccess(:final user):
+          if (user?.email?.trim().toLowerCase() == AppConstants.adminEmail.toLowerCase()) {
+            AppNavigator.replaceWithAdmin(context);
+          } else {
+            AppNavigator.replaceWithHome(context);
+          }
         case AuthFailure(:final message):
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),
@@ -326,8 +336,12 @@ class LoginView extends ConsumerWidget {
     if (context.mounted) viewModel.setLoading(false);
     if (context.mounted) {
       switch (result) {
-        case AuthSuccess():
-          Navigator.of(context).pushReplacementNamed(AppConstants.routeHome);
+        case AuthSuccess(:final user):
+          if (user?.email?.trim().toLowerCase() == AppConstants.adminEmail.toLowerCase()) {
+            AppNavigator.replaceWithAdmin(context);
+          } else {
+            AppNavigator.replaceWithHome(context);
+          }
         case AuthFailure(:final message):
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(content: Text(message), behavior: SnackBarBehavior.floating),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/navigation/app_navigator.dart';
 import '../../core/theme/app_theme.dart';
 import '../../domain/entities/cart_item.dart';
 import '../providers/app_providers.dart';
@@ -125,10 +126,7 @@ class _EmptyCart extends StatelessWidget {
             ),
             const SizedBox(height: 32),
             ElevatedButton.icon(
-              onPressed: () => Navigator.of(context).pushNamedAndRemoveUntil(
-                AppConstants.routeHome,
-                (route) => false,
-              ),
+              onPressed: () => AppNavigator.goHome(context),
               icon: const Icon(Icons.storefront),
               label: const Text('Browse Products'),
             ),
@@ -340,8 +338,7 @@ class _CartBottomBar extends StatelessWidget {
             SizedBox(
               height: 52,
               child: ElevatedButton(
-                onPressed: () => Navigator.of(context)
-                    .pushNamed(AppConstants.routeCheckout),
+                onPressed: () => AppNavigator.goCheckout(context),
                 child: const Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24),
                   child: Text('Checkout'),

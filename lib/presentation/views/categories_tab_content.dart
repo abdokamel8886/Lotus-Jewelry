@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/navigation/app_navigator.dart';
 import '../../domain/entities/product.dart';
 import '../providers/app_providers.dart';
 import '../viewmodels/home_viewmodel.dart';
@@ -118,10 +119,7 @@ class _ProductGrid extends StatelessWidget {
               final product = products[index];
               return ProductCard(
                 product: product,
-                onTap: () => Navigator.of(context).pushNamed(
-                  AppConstants.routeProductDetails,
-                  arguments: product.id,
-                ),
+                onTap: () => AppNavigator.goProductDetails(context, product.id),
               );
             },
           ),

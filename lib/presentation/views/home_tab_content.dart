@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/navigation/app_navigator.dart';
 import '../../core/theme/app_theme.dart';
 import '../../domain/entities/product.dart';
 import '../providers/app_providers.dart';
@@ -142,10 +143,7 @@ class _TopProductsCarouselState extends State<_TopProductsCarousel> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: _HeroTopCard(
                   product: widget.products[index],
-                  onView: () => Navigator.of(context).pushNamed(
-                    AppConstants.routeProductDetails,
-                    arguments: widget.products[index].id,
-                  ),
+                  onView: () => AppNavigator.goProductDetails(context, widget.products[index].id),
                   onGoToCatalog: widget.onGoToCatalog,
                 ),
               );
@@ -468,10 +466,7 @@ class _HomeProductGrid extends StatelessWidget {
               final product = products[index];
               return _CompactProductCard(
                 product: product,
-                onTap: () => Navigator.of(context).pushNamed(
-                  AppConstants.routeProductDetails,
-                  arguments: product.id,
-                ),
+                onTap: () => AppNavigator.goProductDetails(context, product.id),
               );
             },
           ),

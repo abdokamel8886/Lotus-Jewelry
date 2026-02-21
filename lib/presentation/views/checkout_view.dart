@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/navigation/app_navigator.dart';
 import '../../core/theme/app_theme.dart';
 import '../../domain/entities/cart_item.dart';
 import '../../domain/entities/order.dart';
@@ -91,10 +92,7 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
       ref.read(cartViewModelProvider).clearCart();
 
       if (!mounted) return;
-      Navigator.of(context).pushNamedAndRemoveUntil(
-        AppConstants.routeHome,
-        (route) => false,
-      );
+      AppNavigator.goHome(context);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Order placed! ID: $orderId'),

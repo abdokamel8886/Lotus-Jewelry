@@ -4,7 +4,7 @@ class AppConstants {
 
   // App info
   static const String appName = 'Lotus Jewelry';
-  static const String logoAsset = 'assets/logo2.png';
+  static const String logoAsset = 'assets/logo.png';
 
   // Routes
   static const String routeLogin = '/login';
@@ -26,4 +26,8 @@ class AppConstants {
   static const int minPasswordLength = 6;
   static const String emailRegex =
       r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$';
+
+  // Admin login (show Admin page when signed in with this)
+  static const String adminEmail = 'admin@admin.com';
+  static const String adminPassword = '600600';
 }

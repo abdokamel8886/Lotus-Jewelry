@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/navigation/app_navigator.dart';
 import '../../core/theme/app_theme.dart';
 import '../../domain/entities/order.dart';
 import '../providers/app_providers.dart';
@@ -32,7 +33,7 @@ class OrdersTabContent extends ConsumerWidget {
                   const SizedBox(height: 24),
                   ElevatedButton(
                     onPressed: () =>
-                        Navigator.of(context).pushReplacementNamed(AppConstants.routeLogin),
+                        AppNavigator.goAuth(context),
                     child: const Text('Sign In'),
                   ),
                   const SizedBox(height: 48),

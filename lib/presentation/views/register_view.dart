@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/navigation/app_navigator.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/services/firebase_auth_manager.dart';
 import '../providers/app_providers.dart';
@@ -278,11 +279,12 @@ class RegisterView extends ConsumerWidget {
     if (context.mounted) viewModel.setLoading(false);
     if (context.mounted) {
       switch (result) {
-        case AuthSuccess():
-          Navigator.of(context).pushNamedAndRemoveUntil(
-            AppConstants.routeHome,
-            (route) => false,
-          );
+        case AuthSuccess(:final user):
+          if (user?.email?.trim().toLowerCase() == AppConstants.adminEmail.toLowerCase()) {
+            AppNavigator.goAdmin(context);
+          } else {
+            AppNavigator.goHome(context);
+          }
         case AuthFailure(:final message):
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(

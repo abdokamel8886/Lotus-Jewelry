@@ -1,13 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/navigation/app_navigator.dart';
 import '../../core/theme/app_theme.dart';
 import '../providers/app_providers.dart';
 import 'home_tab_content.dart';
 import 'categories_tab_content.dart';
 import 'orders_tab_content.dart';
+import 'admin_view.dart';
 
-/// Main shell: header (logo, tabs Home/Categories/Orders, search/cart) + auth: Login (drawer) or Welcome + Logout
+/// Main shell: header (logo, tabs Home/Categories/Orders, search/cart) + auth: Login or Welcome + Logout; admin gets upload icon
 class MainShellView extends ConsumerStatefulWidget {
   const MainShellView({super.key});
 
@@ -39,7 +41,7 @@ class _MainShellViewState extends ConsumerState<MainShellView> {
           children: [
             Image.asset(
               AppConstants.logoAsset,
-              height: 48,
+              height: 80,
               fit: BoxFit.contain,
               errorBuilder: (_, __, ___) => const SizedBox.shrink(),
             ),
@@ -60,13 +62,21 @@ class _MainShellViewState extends ConsumerState<MainShellView> {
           ],
         ),
         actions: [
+          if (user != null &&
+              (user.email?.trim().toLowerCase() ?? '') == AppConstants.adminEmail.toLowerCase())
+            IconButton(
+              icon: Icon(Icons.upload, color: AppTheme.charcoal),
+              tooltip: 'Upload product',
+              onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const AdminView()),
+              ),
+            ),
           Stack(
             clipBehavior: Clip.none,
             children: [
               IconButton(
                 icon: Icon(Icons.shopping_bag_outlined, color: AppTheme.charcoal),
-                onPressed: () =>
-                    Navigator.of(context).pushNamed(AppConstants.routeCart),
+                onPressed: () => AppNavigator.goCart(context),
               ),
               if (cartRepo.itemCount > 0)
                 Positioned(
@@ -132,7 +142,7 @@ class _MainShellViewState extends ConsumerState<MainShellView> {
             )
           else
             InkWell(
-              onTap: () => Navigator.of(context).pushNamed(AppConstants.routeLogin),
+              onTap: () => AppNavigator.goAuth(context),
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                 child: Row(

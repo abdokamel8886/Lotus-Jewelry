@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/navigation/app_navigator.dart';
 import '../../core/constants/admin_random_lists.dart';
 import '../../core/theme/app_theme.dart';
 import '../providers/app_providers.dart';
@@ -181,7 +182,7 @@ class _AdminViewState extends ConsumerState<AdminView> {
         foregroundColor: AppTheme.charcoal,
         actions: [
           TextButton.icon(
-            onPressed: () => Navigator.of(context).pushReplacementNamed(AppConstants.routeHome),
+            onPressed: () => AppNavigator.replaceWithHome(context),
             icon: const Icon(Icons.store),
             label: const Text('Shop'),
           ),

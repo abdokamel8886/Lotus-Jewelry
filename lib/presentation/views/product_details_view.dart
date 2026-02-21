@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/app_constants.dart';
+import '../../core/navigation/app_navigator.dart';
 import '../../core/theme/app_theme.dart';
 import '../../domain/entities/cart_item.dart';
 import '../../domain/entities/product.dart';
@@ -28,7 +29,7 @@ class ProductDetailsView extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(Icons.shopping_bag_outlined),
-            onPressed: () => Navigator.of(context).pushNamed(AppConstants.routeCart),
+            onPressed: () => AppNavigator.goCart(context),
           ),
         ],
       ),
@@ -57,8 +58,7 @@ class ProductDetailsView extends ConsumerWidget {
                   behavior: SnackBarBehavior.floating,
                   action: SnackBarAction(
                     label: 'View Cart',
-                    onPressed: () =>
-                        Navigator.of(context).pushNamed(AppConstants.routeCart),
+                    onPressed: () => AppNavigator.goCart(context),
                   ),
                 ),
               );
@@ -70,7 +70,7 @@ class ProductDetailsView extends ConsumerWidget {
                 quantity: 1,
                 selectedSize: selectedSize,
               ));
-              Navigator.of(context).pushNamed(AppConstants.routeCheckout);
+              AppNavigator.goCheckout(context);
             },
           );
         },
@@ -356,10 +356,7 @@ class _YouMayAlsoLike extends StatelessWidget {
               final p = products[index];
               return _SimilarProductCard(
                 product: p,
-                onTap: () => Navigator.of(context).pushNamed(
-                  AppConstants.routeProductDetails,
-                  arguments: p.id,
-                ),
+                onTap: () => AppNavigator.goProductDetails(context, p.id),
               );
             },
           ),

@@ -16,7 +16,7 @@ class AppFooter extends StatelessWidget {
         children: [
           Image.asset(
             AppConstants.logoAsset,
-            height: 40,
+            height: 100,
             fit: BoxFit.contain,
             errorBuilder: (_, __, ___) => const SizedBox.shrink(),
           ),
