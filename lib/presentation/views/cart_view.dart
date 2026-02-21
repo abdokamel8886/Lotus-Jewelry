@@ -210,7 +210,7 @@ class _CartItemCard extends StatelessWidget {
                       ),
                     ),
                   Text(
-                    '\$${item.product.finalPrice.toStringAsFixed(0)} each',
+                    '${AppConstants.formatPrice(item.product.finalPrice)} each',
                     style: TextStyle(
                       color: AppTheme.gold,
                       fontWeight: FontWeight.w600,
@@ -271,7 +271,7 @@ class _CartItemCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  '\$${item.totalPrice.toStringAsFixed(0)}',
+                  AppConstants.formatPrice(item.totalPrice),
                   style: const TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 18,
@@ -326,7 +326,7 @@ class _CartBottomBar extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '\$${total.toStringAsFixed(0)}',
+                  AppConstants.formatPrice(total),
                   style: const TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,

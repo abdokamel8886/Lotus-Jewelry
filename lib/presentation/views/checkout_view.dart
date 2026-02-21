@@ -211,7 +211,7 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
                                   Text('Processing...'),
                                 ],
                               )
-                            : Text('Pay \$${total.toStringAsFixed(0)}'),
+                            : Text('Pay ${AppConstants.formatPrice(total)}'),
                       ),
                     ),
                   ],
@@ -304,7 +304,7 @@ class _OrderSummary extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '\$${item.totalPrice.toStringAsFixed(0)}',
+                        AppConstants.formatPrice(item.totalPrice),
                         style: const TextStyle(
                           fontWeight: FontWeight.w600,
                         ),
@@ -327,7 +327,7 @@ class _OrderSummary extends StatelessWidget {
             children: [
               const Text('Total', style: TextStyle(fontWeight: FontWeight.w600)),
               Text(
-                '\$${total.toStringAsFixed(0)}',
+                AppConstants.formatPrice(total),
                 style: const TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,

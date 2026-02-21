@@ -192,7 +192,7 @@ class _ProductDetailsContentState extends State<_ProductDetailsContent> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  '\$${product.finalPrice.toStringAsFixed(0)}',
+                  AppConstants.formatPrice(product.finalPrice),
                   style: const TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
@@ -202,7 +202,7 @@ class _ProductDetailsContentState extends State<_ProductDetailsContent> {
                 if (product.discount > 0) ...[
                   const SizedBox(height: 4),
                   Text(
-                    'Was \$${product.price.toStringAsFixed(0)}',
+                    'Was ${AppConstants.formatPrice(product.price)}',
                     style: TextStyle(
                       fontSize: 15,
                       color: Colors.grey.shade500,
@@ -453,7 +453,7 @@ class _SimilarProductCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      '\$${product.finalPrice.toStringAsFixed(0)}',
+                      AppConstants.formatPrice(product.finalPrice),
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 14,

@@ -30,4 +30,13 @@ class AppConstants {
   // Admin login (show Admin page when signed in with this)
   static const String adminEmail = 'admin@admin.com';
   static const String adminPassword = '600600';
+
+  /// Currency suffix for all prices in the app
+  static const String currencySuffix = ' EGP';
+
+  /// Format price for display (e.g. "1,250 EGP")
+  static String formatPrice(double value, {int decimals = 0}) {
+    final s = value.toStringAsFixed(decimals);
+    return '$s$currencySuffix';
+  }
 }

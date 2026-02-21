@@ -175,7 +175,7 @@ class _OrderCard extends StatelessWidget {
                         ),
                       ),
                       Text(
-                        '\$${item.totalPrice.toStringAsFixed(0)}',
+                        AppConstants.formatPrice(item.totalPrice),
                         style: TextStyle(
                           fontWeight: FontWeight.w500,
                           color: AppTheme.gold,
@@ -199,7 +199,7 @@ class _OrderCard extends StatelessWidget {
             children: [
               const Text('Total', style: TextStyle(fontWeight: FontWeight.w600)),
               Text(
-                '\$${order.total.toStringAsFixed(0)}',
+                AppConstants.formatPrice(order.total),
                 style: const TextStyle(
                   fontWeight: FontWeight.bold,
                   fontSize: 18,

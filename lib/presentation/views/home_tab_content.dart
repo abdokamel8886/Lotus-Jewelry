@@ -279,7 +279,7 @@ class _HeroTopCard extends StatelessWidget {
                           Row(
                             children: [
                               Text(
-                                '\$${product.finalPrice.toStringAsFixed(0)}',
+                                AppConstants.formatPrice(product.finalPrice),
                                 style: TextStyle(
                                   fontSize: priceSize,
                                   fontWeight: FontWeight.bold,
@@ -369,7 +369,7 @@ class _HeroTopCard extends StatelessWidget {
                         Row(
                           children: [
                             Text(
-                              '\$${product.finalPrice.toStringAsFixed(0)}',
+                              AppConstants.formatPrice(product.finalPrice),
                               style: TextStyle(
                                 fontSize: priceSize,
                                 fontWeight: FontWeight.bold,
@@ -491,12 +491,15 @@ class _CompactProductCard extends StatelessWidget {
     return Card(
       clipBehavior: Clip.antiAlias,
       margin: EdgeInsets.zero,
-      elevation: 0,
+      elevation: 1,
+      shadowColor: Colors.black12,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(14),
+        side: BorderSide(color: Colors.grey.shade200),
       ),
       child: InkWell(
         onTap: onTap,
+        borderRadius: BorderRadius.circular(14),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
@@ -527,7 +530,7 @@ class _CompactProductCard extends StatelessWidget {
                       child: Container(
                         padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                         decoration: BoxDecoration(
-                          color: Colors.red,
+                          color: Colors.red.shade600,
                           borderRadius: BorderRadius.circular(6),
                         ),
                         child: Text(
@@ -535,8 +538,30 @@ class _CompactProductCard extends StatelessWidget {
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 11,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (product.badge != null && product.badge!.isNotEmpty)
+                    Positioned(
+                      top: 8,
+                      right: 8,
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: AppTheme.gold,
+                          borderRadius: BorderRadius.circular(4),
+                        ),
+                        child: Text(
+                          product.badge!,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 9,
                             fontWeight: FontWeight.w600,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ),
                     ),
@@ -592,6 +617,15 @@ class _CompactProductCard extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
+                            if (!isNarrowCard && product.color != null && product.color!.isNotEmpty) ...[
+                              const SizedBox(height: 2),
+                              Text(
+                                product.color!,
+                                style: TextStyle(fontSize: 10, color: Colors.grey.shade500),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ],
                           ],
                         ),
                         Column(
@@ -602,18 +636,21 @@ class _CompactProductCard extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.baseline,
                               textBaseline: TextBaseline.alphabetic,
                               children: [
-                                Text(
-                                  '\$${product.finalPrice.toStringAsFixed(0)}',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: isNarrowCard ? 13 : 15,
-                                    color: AppTheme.gold,
+                                Flexible(
+                                  child: Text(
+                                    AppConstants.formatPrice(product.finalPrice),
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: isNarrowCard ? 13 : 15,
+                                      color: AppTheme.gold,
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
                                   ),
                                 ),
                                 if (product.discount > 0 && !isNarrowCard) ...[
                                   const SizedBox(width: 6),
                                   Text(
-                                    '\$${product.price.toStringAsFixed(0)}',
+                                    AppConstants.formatPrice(product.price),
                                     style: TextStyle(
                                       fontSize: 10,
                                       color: Colors.grey.shade500,
@@ -623,15 +660,20 @@ class _CompactProductCard extends StatelessWidget {
                                 ],
                               ],
                             ),
-                            if (product.ratings != null && !isNarrowCard) ...[
+                            if (!isNarrowCard) ...[
                               const SizedBox(height: 2),
                               Row(
                                 children: [
                                   Icon(Icons.star_rounded, size: 10, color: Colors.amber.shade700),
                                   const SizedBox(width: 2),
                                   Text(
-                                    product.ratings!.toStringAsFixed(1),
-                                    style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                                    product.ratings != null
+                                        ? product.ratings!.toStringAsFixed(1)
+                                        : '—',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: product.ratings != null ? Colors.grey.shade600 : Colors.grey.shade400,
+                                    ),
                                   ),
                                 ],
                               ),
