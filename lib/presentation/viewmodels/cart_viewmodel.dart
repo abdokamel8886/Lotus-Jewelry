@@ -20,9 +20,9 @@ class CartViewModel {
   int get itemCount => _cartRepository.itemCount;
 
   void addToCart(CartItem item) => _cartRepository.addToCart(item);
-  void updateQuantity(String productId, int quantity) =>
-      _cartRepository.updateQuantity(productId, quantity);
-  void removeFromCart(String productId) =>
-      _cartRepository.removeFromCart(productId);
+  void updateQuantity(String productId, int quantity, [String? selectedSize]) =>
+      _cartRepository.updateQuantity(productId, quantity, selectedSize);
+  void removeFromCart(String productId, [String? selectedSize]) =>
+      _cartRepository.removeFromCart(productId, selectedSize);
   void clearCart() => _cartRepository.clearCart();
 }

@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/repositories/cart_repository_impl.dart';
 import '../../data/repositories/product_repository_impl.dart';
@@ -11,6 +12,11 @@ import '../../domain/repositories/product_repository.dart';
 /// Firebase Auth Manager
 final firebaseAuthManagerProvider = Provider<FirebaseAuthManager>((ref) {
   return FirebaseAuthManager();
+});
+
+/// Current auth state — rebuilds when user signs in or out (cached by Firebase)
+final authStateProvider = StreamProvider<User?>((ref) {
+  return ref.read(firebaseAuthManagerProvider).authStateChanges;
 });
 
 /// Firebase Realtime Database Manager

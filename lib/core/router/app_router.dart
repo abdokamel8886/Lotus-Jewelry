@@ -3,10 +3,10 @@ import '../../core/constants/app_constants.dart';
 import '../../presentation/views/cart_view.dart';
 import '../../presentation/views/checkout_view.dart';
 import '../../presentation/views/main_shell_view.dart';
+import '../../presentation/views/auth_view.dart';
 import '../../presentation/views/login_view.dart';
 import '../../presentation/views/product_details_view.dart';
 import '../../presentation/views/admin_view.dart';
-import '../../presentation/views/profile_view.dart';
 import '../../presentation/views/register_view.dart';
 
 /// App routing configuration
@@ -18,12 +18,12 @@ class AppRouter {
     switch (settings.name) {
       case AppConstants.routeLogin:
         return MaterialPageRoute(
-          builder: (_) => const LoginView(),
+          builder: (_) => const AuthView(initialIndex: 0),
           settings: settings,
         );
       case AppConstants.routeRegister:
         return MaterialPageRoute(
-          builder: (_) => const RegisterView(),
+          builder: (_) => const AuthView(initialIndex: 1),
           settings: settings,
         );
       case AppConstants.routeHome:
@@ -47,11 +47,6 @@ class AppRouter {
           builder: (_) => const CheckoutView(),
           settings: settings,
         );
-      case AppConstants.routeProfile:
-        return MaterialPageRoute(
-          builder: (_) => const ProfileView(),
-          settings: settings,
-        );
       case AppConstants.routeAdmin:
         return MaterialPageRoute(
           builder: (_) => const AdminView(),
@@ -59,7 +54,7 @@ class AppRouter {
         );
       default:
         return MaterialPageRoute(
-          builder: (_) => const LoginView(),
+          builder: (_) => const AuthView(),
           settings: settings,
         );
     }

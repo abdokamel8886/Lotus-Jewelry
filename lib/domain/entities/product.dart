@@ -11,12 +11,16 @@ class Product {
   final int discount; // percentage 0-100
   final bool inStock;
   final double? ratings;
-  final String? size;
+  final String? size; // legacy single size
+  final List<String>? sizes; // array of sizes e.g. ["14","15","16"]
   final int stock;
   final List<String> tags;
   final num? weight;
   final String? length;
   final String? badge;
+  final String? care;
+  final String? brand;
+  final String? delivery;
 
   const Product({
     required this.id,
@@ -31,12 +35,19 @@ class Product {
     this.inStock = true,
     this.ratings,
     this.size,
+    this.sizes,
     this.stock = 0,
     this.tags = const [],
     this.weight,
     this.length,
     this.badge,
+    this.care,
+    this.brand,
+    this.delivery,
   });
+
+  /// Whether product has selectable sizes
+  bool get hasSizes => sizes != null && sizes!.isNotEmpty;
 
   /// Primary image (first in list)
   String get imageUrl => images.isNotEmpty ? images.first : '';
@@ -62,11 +73,15 @@ class Product {
         'discount': discount,
         'inStock': inStock,
         'ratings': ratings,
-        'size': size,
+        'size': size ?? sizes?.join(','),
+        'sizes': sizes,
         'stock': stock,
         'tags': tags,
         'weight': weight,
         'length': length,
+        'care': care,
+        'brand': brand,
+        'delivery': delivery,
       };
 
   factory Product.fromJson(Map<String, dynamic> json, [String? id]) {
@@ -84,6 +99,14 @@ class Product {
       tagsList = tagsRaw.map((e) => e?.toString() ?? '').toList();
     }
 
+    List<String>? sizesList;
+    final sizeRaw = json['size'];
+    if (sizeRaw is List) {
+      sizesList = sizeRaw.map((e) => e?.toString() ?? '').where((s) => s.isNotEmpty).toList();
+    } else if (sizeRaw != null && sizeRaw.toString().isNotEmpty) {
+      sizesList = [sizeRaw.toString()];
+    }
+
     return Product(
       id: id ?? json['id'] as String? ?? '',
       name: json['name'] as String? ?? '',
@@ -96,12 +119,16 @@ class Product {
       discount: (json['discount'] as num?)?.toInt() ?? 0,
       inStock: json['inStock'] as bool? ?? true,
       ratings: (json['ratings'] as num?)?.toDouble(),
-      size: json['size']?.toString(),
+      size: sizesList?.join(', '),
+      sizes: sizesList,
       stock: (json['stock'] as num?)?.toInt() ?? 0,
       tags: tagsList,
       weight: json['weight'] as num?,
       length: json['length'] as String?,
       badge: json['badge'] as String?,
+      care: json['care'] as String?,
+      brand: json['brand'] as String?,
+      delivery: json['delivery'] as String?,
     );
   }
 
@@ -118,11 +145,15 @@ class Product {
     bool? inStock,
     double? ratings,
     String? size,
+    List<String>? sizes,
     int? stock,
     List<String>? tags,
     num? weight,
     String? length,
     String? badge,
+    String? care,
+    String? brand,
+    String? delivery,
   }) {
     return Product(
       id: id ?? this.id,
@@ -137,11 +168,15 @@ class Product {
       inStock: inStock ?? this.inStock,
       ratings: ratings ?? this.ratings,
       size: size ?? this.size,
+      sizes: sizes ?? this.sizes,
       stock: stock ?? this.stock,
       tags: tags ?? this.tags,
       weight: weight ?? this.weight,
       length: length ?? this.length,
       badge: badge ?? this.badge,
+      care: care ?? this.care,
+      brand: brand ?? this.brand,
+      delivery: delivery ?? this.delivery,
     );
   }
 }

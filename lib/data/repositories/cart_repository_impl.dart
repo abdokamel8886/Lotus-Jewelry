@@ -30,7 +30,9 @@ class CartRepositoryImpl extends ChangeNotifier implements CartRepository {
 
   @override
   void addToCart(CartItem item) {
-    final index = _items.indexWhere((i) => i.product.id == item.product.id);
+    final index = _items.indexWhere((i) =>
+        i.product.id == item.product.id &&
+        i.selectedSize == item.selectedSize);
     if (index >= 0) {
       _items[index] = _items[index].copyWith(
         quantity: _items[index].quantity + item.quantity,
@@ -43,12 +45,13 @@ class CartRepositoryImpl extends ChangeNotifier implements CartRepository {
   }
 
   @override
-  void updateQuantity(String productId, int quantity) {
+  void updateQuantity(String productId, int quantity, [String? selectedSize]) {
     if (quantity <= 0) {
-      removeFromCart(productId);
+      removeFromCart(productId, selectedSize);
       return;
     }
-    final index = _items.indexWhere((i) => i.product.id == productId);
+    final index = _items.indexWhere((i) =>
+        i.product.id == productId && i.selectedSize == selectedSize);
     if (index >= 0) {
       _items[index] = _items[index].copyWith(quantity: quantity);
       notifyListeners();
@@ -57,8 +60,9 @@ class CartRepositoryImpl extends ChangeNotifier implements CartRepository {
   }
 
   @override
-  void removeFromCart(String productId) {
-    _items.removeWhere((i) => i.product.id == productId);
+  void removeFromCart(String productId, [String? selectedSize]) {
+    _items.removeWhere((i) =>
+        i.product.id == productId && i.selectedSize == selectedSize);
     notifyListeners();
     _persist();
   }

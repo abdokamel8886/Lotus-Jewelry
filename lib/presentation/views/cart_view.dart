@@ -45,9 +45,12 @@ class CartView extends ConsumerWidget {
                         onQuantityChanged: (qty) => viewModel.updateQuantity(
                           items[index].product.id,
                           qty,
+                          items[index].selectedSize,
                         ),
-                        onRemove: () =>
-                            viewModel.removeFromCart(items[index].product.id),
+                        onRemove: () => viewModel.removeFromCart(
+                          items[index].product.id,
+                          items[index].selectedSize,
+                        ),
                       );
                     },
                   ),
@@ -197,6 +200,17 @@ class _CartItemCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
+                  if (item.selectedSize != null)
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 4),
+                      child: Text(
+                        'Size: ${item.selectedSize}',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey.shade600,
+                        ),
+                      ),
+                    ),
                   Text(
                     '\$${item.product.finalPrice.toStringAsFixed(0)} each',
                     style: TextStyle(

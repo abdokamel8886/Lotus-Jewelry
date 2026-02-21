@@ -39,9 +39,13 @@ class ProductDetailsView extends ConsumerWidget {
           }
           return _ProductDetailsContent(
             product: product,
-            onAddToCart: () {
+            onAddToCart: (selectedSize) {
               if (!product.inStock) return;
-              cartRepo.addToCart(CartItem(product: product, quantity: 1));
+              cartRepo.addToCart(CartItem(
+                product: product,
+                quantity: 1,
+                selectedSize: selectedSize,
+              ));
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
                   content: Text('${product.name} added to cart'),
@@ -54,9 +58,13 @@ class ProductDetailsView extends ConsumerWidget {
                 ),
               );
             },
-            onBuyNow: () {
+            onBuyNow: (selectedSize) {
               if (!product.inStock) return;
-              cartRepo.addToCart(CartItem(product: product, quantity: 1));
+              cartRepo.addToCart(CartItem(
+                product: product,
+                quantity: 1,
+                selectedSize: selectedSize,
+              ));
               Navigator.of(context).pushNamed(AppConstants.routeCheckout);
             },
           );
@@ -82,8 +90,8 @@ class ProductDetailsView extends ConsumerWidget {
 
 class _ProductDetailsContent extends StatefulWidget {
   final Product product;
-  final VoidCallback onAddToCart;
-  final VoidCallback onBuyNow;
+  final void Function(String? selectedSize) onAddToCart;
+  final void Function(String? selectedSize) onBuyNow;
 
   const _ProductDetailsContent({
     required this.product,
@@ -97,6 +105,7 @@ class _ProductDetailsContent extends StatefulWidget {
 
 class _ProductDetailsContentState extends State<_ProductDetailsContent> {
   int _imageIndex = 0;
+  String? _selectedSize;
   late PageController _pageController;
 
   @override
@@ -109,6 +118,12 @@ class _ProductDetailsContentState extends State<_ProductDetailsContent> {
   void dispose() {
     _pageController.dispose();
     super.dispose();
+  }
+
+  bool _canAddToCart(Product product) {
+    if (!product.inStock) return false;
+    if (product.hasSizes && _selectedSize == null) return false;
+    return true;
   }
 
   @override
@@ -188,6 +203,58 @@ class _ProductDetailsContentState extends State<_ProductDetailsContent> {
                     ),
                   ),
                 ],
+                if (product.hasSizes) ...[
+                  const SizedBox(height: 20),
+                  Text(
+                    'Size',
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey.shade700,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  Wrap(
+                    spacing: 10,
+                    runSpacing: 10,
+                    children: (product.sizes ?? []).map((s) {
+                      final isSelected = _selectedSize == s;
+                      return GestureDetector(
+                        onTap: () => setState(() => _selectedSize = s),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                          decoration: BoxDecoration(
+                            color: isSelected ? AppTheme.gold : Colors.grey.shade100,
+                            borderRadius: BorderRadius.circular(10),
+                            border: Border.all(
+                              color: isSelected ? AppTheme.gold : Colors.grey.shade300,
+                              width: isSelected ? 2 : 1,
+                            ),
+                          ),
+                          child: Text(
+                            s,
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w600,
+                              color: isSelected ? Colors.white : AppTheme.charcoal,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  ),
+                  if (product.hasSizes && _selectedSize == null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8),
+                      child: Text(
+                        'Please select a size',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.orange.shade700,
+                        ),
+                      ),
+                    ),
+                ],
                 const SizedBox(height: 24),
                 Row(
                   children: [
@@ -195,7 +262,7 @@ class _ProductDetailsContentState extends State<_ProductDetailsContent> {
                       child: SizedBox(
                         height: 50,
                         child: OutlinedButton(
-                          onPressed: product.inStock ? widget.onAddToCart : null,
+                          onPressed: _canAddToCart(product) ? () => widget.onAddToCart(_selectedSize) : null,
                           style: OutlinedButton.styleFrom(
                             side: BorderSide(color: AppTheme.charcoal),
                             foregroundColor: AppTheme.charcoal,
@@ -209,7 +276,7 @@ class _ProductDetailsContentState extends State<_ProductDetailsContent> {
                       child: SizedBox(
                         height: 50,
                         child: ElevatedButton(
-                          onPressed: product.inStock ? widget.onBuyNow : null,
+                          onPressed: _canAddToCart(product) ? () => widget.onBuyNow(_selectedSize) : null,
                           style: ElevatedButton.styleFrom(
                             backgroundColor: AppTheme.charcoal,
                             foregroundColor: Colors.white,
@@ -445,17 +512,28 @@ class _DesignDetailsCard extends StatelessWidget {
     if (product.color != null && product.color!.isNotEmpty) {
       rows.add(('Color', product.color!));
     }
+    if (product.sizes != null && product.sizes!.isNotEmpty) {
+      rows.add(('Size', product.sizes!.join(', ')));
+    } else if (product.size != null && product.size!.isNotEmpty) {
+      rows.add(('Size', product.size!));
+    }
     if (product.weight != null) {
       rows.add(('Weight', '${product.weight} g'));
     }
     if (product.length != null && product.length!.isNotEmpty) {
       rows.add(('Length', product.length!));
     }
-    if (product.size != null && product.size!.isNotEmpty) {
-      rows.add(('Size', product.size!));
-    }
     if (product.category.isNotEmpty) {
       rows.add(('Category', product.categoryDisplay));
+    }
+    if (product.brand != null && product.brand!.isNotEmpty) {
+      rows.add(('Brand', product.brand!));
+    }
+    if (product.care != null && product.care!.isNotEmpty) {
+      rows.add(('Care', product.care!));
+    }
+    if (product.delivery != null && product.delivery!.isNotEmpty) {
+      rows.add(('Delivery', product.delivery!));
     }
 
     if (rows.isEmpty) {

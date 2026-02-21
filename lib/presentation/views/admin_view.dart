@@ -28,6 +28,9 @@ class _AdminViewState extends ConsumerState<AdminView> {
   final _lengthController = TextEditingController();
   final _tagsController = TextEditingController(); // comma separated
   final _badgeController = TextEditingController();
+  final _careController = TextEditingController();
+  final _brandController = TextEditingController();
+  final _deliveryController = TextEditingController();
 
   bool _inStock = true;
   bool _isUploading = false;
@@ -49,6 +52,9 @@ class _AdminViewState extends ConsumerState<AdminView> {
     _lengthController.dispose();
     _tagsController.dispose();
     _badgeController.dispose();
+    _careController.dispose();
+    _brandController.dispose();
+    _deliveryController.dispose();
     super.dispose();
   }
 
@@ -84,7 +90,11 @@ class _AdminViewState extends ConsumerState<AdminView> {
       if (_ratingsController.text.trim().isNotEmpty) {
         data['ratings'] = double.tryParse(_ratingsController.text.trim());
       }
-      if (_sizeController.text.trim().isNotEmpty) data['size'] = _sizeController.text.trim();
+      final sizeStr = _sizeController.text.trim();
+      if (sizeStr.isNotEmpty) {
+        final sizes = sizeStr.split(',').map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+        data['size'] = sizes.length == 1 ? sizes.first : sizes;
+      }
       if (_weightController.text.trim().isNotEmpty) {
         final w = num.tryParse(_weightController.text.trim());
         if (w != null) data['weight'] = w;
@@ -92,6 +102,9 @@ class _AdminViewState extends ConsumerState<AdminView> {
       if (_lengthController.text.trim().isNotEmpty) data['length'] = _lengthController.text.trim();
       if (tags.isNotEmpty) data['tags'] = tags;
       if (_badgeController.text.trim().isNotEmpty) data['badge'] = _badgeController.text.trim();
+      if (_careController.text.trim().isNotEmpty) data['care'] = _careController.text.trim();
+      if (_brandController.text.trim().isNotEmpty) data['brand'] = _brandController.text.trim();
+      if (_deliveryController.text.trim().isNotEmpty) data['delivery'] = _deliveryController.text.trim();
 
       final db = ref.read(firebaseRealtimeDbManagerProvider);
       final key = await db.addProduct(data);
@@ -137,6 +150,9 @@ class _AdminViewState extends ConsumerState<AdminView> {
     _lengthController.clear();
     _tagsController.clear();
     _badgeController.clear();
+    _careController.clear();
+    _brandController.clear();
+    _deliveryController.clear();
     setState(() {
       _category = 'rings';
       _inStock = true;
@@ -300,7 +316,7 @@ class _AdminViewState extends ConsumerState<AdminView> {
                     child: TextFormField(
                       controller: _sizeController,
                       decoration: const InputDecoration(
-                        labelText: 'Size',
+                        labelText: 'Sizes (comma-separated: 14, 15, 16)',
                         border: OutlineInputBorder(),
                       ),
                     ),
@@ -340,6 +356,30 @@ class _AdminViewState extends ConsumerState<AdminView> {
                 controller: _badgeController,
                 decoration: const InputDecoration(
                   labelText: 'Badge (e.g. Best Seller)',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _careController,
+                decoration: const InputDecoration(
+                  labelText: 'Care (e.g. Clean with soft cloth)',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _brandController,
+                decoration: const InputDecoration(
+                  labelText: 'Brand (e.g. L\'azurde)',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: _deliveryController,
+                decoration: const InputDecoration(
+                  labelText: 'Delivery (e.g. 3-5 business days)',
                   border: OutlineInputBorder(),
                 ),
               ),

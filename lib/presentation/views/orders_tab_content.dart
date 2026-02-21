@@ -167,11 +167,12 @@ class _OrderCard extends StatelessWidget {
                   padding: const EdgeInsets.only(bottom: 6),
                   child: Row(
                     children: [
-                      Text(
-                        '${item.name} x${item.quantity}',
-                        style: const TextStyle(fontSize: 14),
+                      Expanded(
+                        child: Text(
+                          '${item.name} x${item.quantity}${item.size != null ? ' (Size: ${item.size})' : ''}',
+                          style: const TextStyle(fontSize: 14),
+                        ),
                       ),
-                      const Spacer(),
                       Text(
                         '\$${item.totalPrice.toStringAsFixed(0)}',
                         style: TextStyle(

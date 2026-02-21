@@ -5,6 +5,7 @@ class OrderItem {
   final double price;
   final int quantity;
   final String imageUrl;
+  final String? size;
 
   const OrderItem({
     required this.productId,
@@ -12,6 +13,7 @@ class OrderItem {
     required this.price,
     required this.quantity,
     required this.imageUrl,
+    this.size,
   });
 
   double get totalPrice => price * quantity;
@@ -22,6 +24,7 @@ class OrderItem {
         'price': price,
         'quantity': quantity,
         'imageUrl': imageUrl,
+        'size': size,
       };
 
   factory OrderItem.fromJson(Map<String, dynamic> json) {
@@ -31,6 +34,7 @@ class OrderItem {
       price: (json['price'] as num?)?.toDouble() ?? 0,
       quantity: json['quantity'] as int? ?? 1,
       imageUrl: json['imageUrl'] as String? ?? '',
+      size: json['size'] as String?,
     );
   }
 }

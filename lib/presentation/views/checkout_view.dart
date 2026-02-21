@@ -69,6 +69,7 @@ class _CheckoutViewState extends ConsumerState<CheckoutView> {
             price: c.product.finalPrice,
             quantity: c.quantity,
             imageUrl: c.product.imageUrl,
+            size: c.selectedSize,
           ),
         )
         .toList();
