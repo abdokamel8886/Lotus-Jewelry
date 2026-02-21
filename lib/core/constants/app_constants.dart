@@ -3,7 +3,7 @@ class AppConstants {
   AppConstants._();
 
   // App info
-  static const String appName = 'Gold Jewelry';
+  static const String appName = 'Lotus Jewelrys';
 
   // Routes
   static const String routeLogin = '/login';
@@ -11,6 +11,9 @@ class AppConstants {
   static const String routeHome = '/home';
   static const String routeProductDetails = '/product-details';
   static const String routeCart = '/cart';
+  static const String routeCheckout = '/checkout';
+  static const String routeProfile = '/profile';
+  static const String routeAdmin = '/admin';
 
   // Product categories
   static const String categoryAll = 'All';

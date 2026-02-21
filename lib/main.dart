@@ -27,10 +27,11 @@ class GoldApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
       title: AppConstants.appName,
       theme: AppTheme.lightTheme,
-      // Initial route - Login (replace with Home for development shortcut)
-      initialRoute: AppConstants.routeLogin,
+      // Initial route - use routeAdmin for admin, routeHome for shop, routeLogin for auth
+      initialRoute: AppConstants.routeAdmin,
       onGenerateRoute: AppRouter.onGenerateRoute,
     );
   }

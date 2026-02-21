@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import '../../core/constants/app_constants.dart';
 import '../../presentation/views/cart_view.dart';
-import '../../presentation/views/home_view.dart';
+import '../../presentation/views/checkout_view.dart';
+import '../../presentation/views/main_shell_view.dart';
 import '../../presentation/views/login_view.dart';
 import '../../presentation/views/product_details_view.dart';
+import '../../presentation/views/admin_view.dart';
+import '../../presentation/views/profile_view.dart';
 import '../../presentation/views/register_view.dart';
 
 /// App routing configuration
@@ -25,7 +28,7 @@ class AppRouter {
         );
       case AppConstants.routeHome:
         return MaterialPageRoute(
-          builder: (_) => const HomeView(),
+          builder: (_) => const MainShellView(),
           settings: settings,
         );
       case AppConstants.routeProductDetails:
@@ -37,6 +40,21 @@ class AppRouter {
       case AppConstants.routeCart:
         return MaterialPageRoute(
           builder: (_) => const CartView(),
+          settings: settings,
+        );
+      case AppConstants.routeCheckout:
+        return MaterialPageRoute(
+          builder: (_) => const CheckoutView(),
+          settings: settings,
+        );
+      case AppConstants.routeProfile:
+        return MaterialPageRoute(
+          builder: (_) => const ProfileView(),
+          settings: settings,
+        );
+      case AppConstants.routeAdmin:
+        return MaterialPageRoute(
+          builder: (_) => const AdminView(),
           settings: settings,
         );
       default:

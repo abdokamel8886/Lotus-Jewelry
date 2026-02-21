@@ -1,33 +1,21 @@
 import '../../domain/entities/product.dart';
 import '../../domain/repositories/product_repository.dart';
-import '../datasources/dummy_products.dart';
-import 'dart:async';
+import '../services/firebase_realtime_db_manager.dart';
 
-/// Implementation of ProductRepository using dummy data
-/// Simulates async fetch with delay for loading placeholder demonstration
+/// Product repository - fetches products from Firebase Realtime Database
 class ProductRepositoryImpl implements ProductRepository {
-  // Simulated network delay
-  static const Duration _delay = Duration(milliseconds: 800);
+  ProductRepositoryImpl({FirebaseRealtimeDbManager? dbManager})
+      : _dbManager = dbManager ?? FirebaseRealtimeDbManager();
+
+  final FirebaseRealtimeDbManager _dbManager;
 
   @override
   Future<List<Product>> getProducts({String? category}) async {
-    await Future.delayed(_delay);
-
-    if (category == null || category == 'All') {
-      return List.from(DummyProducts.all);
-    }
-    return DummyProducts.all
-        .where((p) => p.category == category)
-        .toList();
+    return _dbManager.getProducts(category: category);
   }
 
   @override
   Future<Product?> getProductById(String id) async {
-    await Future.delayed(_delay);
-    try {
-      return DummyProducts.all.firstWhere((p) => p.id == id);
-    } catch (_) {
-      return null;
-    }
+    return _dbManager.getProductById(id);
   }
 }

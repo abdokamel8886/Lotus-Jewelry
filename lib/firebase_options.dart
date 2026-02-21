@@ -58,6 +58,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '265002946669',
     projectId: 'golden-era-5c0fc',
     authDomain: 'golden-era-5c0fc.firebaseapp.com',
+    databaseURL: 'https://golden-era-5c0fc-default-rtdb.firebaseio.com',
     storageBucket: 'golden-era-5c0fc.firebasestorage.app',
   );
+
 }

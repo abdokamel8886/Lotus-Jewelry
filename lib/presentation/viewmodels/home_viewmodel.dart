@@ -2,9 +2,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/product.dart';
 import '../../domain/repositories/product_repository.dart';
 import '../providers/app_providers.dart';
-import '../../core/constants/app_constants.dart';
 
-/// ViewModel for Home page - fetches products and manages category filter
+/// ViewModel for Home - products and category filter (category id: "all" | "rings" | "necklaces" | "bracelets")
 class HomeViewModel extends StateNotifier<AsyncValue<List<Product>>> {
   HomeViewModel(this._productRepository) : super(const AsyncValue.loading()) {
     loadProducts();
@@ -12,7 +11,7 @@ class HomeViewModel extends StateNotifier<AsyncValue<List<Product>>> {
 
   final ProductRepository _productRepository;
 
-  String _selectedCategory = AppConstants.categoryAll;
+  String _selectedCategory = 'all';
 
   String get selectedCategory => _selectedCategory;
 
@@ -20,9 +19,7 @@ class HomeViewModel extends StateNotifier<AsyncValue<List<Product>>> {
     state = const AsyncValue.loading();
     try {
       final products = await _productRepository.getProducts(
-        category: _selectedCategory == AppConstants.categoryAll
-            ? null
-            : _selectedCategory,
+        category: _selectedCategory == 'all' ? null : _selectedCategory,
       );
       state = AsyncValue.data(products);
     } catch (e, st) {

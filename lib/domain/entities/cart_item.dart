@@ -10,7 +10,21 @@ class CartItem {
     required this.quantity,
   });
 
-  double get totalPrice => product.price * quantity;
+  double get totalPrice => product.finalPrice * quantity;
+
+  Map<String, dynamic> toJson() => {
+        'product': product.toJson(),
+        'quantity': quantity,
+      };
+
+  factory CartItem.fromJson(Map<String, dynamic> json) {
+    return CartItem(
+      product: Product.fromJson(
+        Map<String, dynamic>.from(json['product'] as Map? ?? {}),
+      ),
+      quantity: json['quantity'] as int? ?? 1,
+    );
+  }
 
   CartItem copyWith({
     Product? product,
