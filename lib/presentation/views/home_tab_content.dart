@@ -214,11 +214,10 @@ class _HeroTopCard extends StatelessWidget {
       child: isNarrow
           ? Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
-              mainAxisSize: MainAxisSize.min,
               children: [
-                // Image on top: fixed aspect ratio so no huge empty background
-                AspectRatio(
-                  aspectRatio: 4 / 3,
+                // Image: fixed height on mobile so content area isn't overloaded
+                SizedBox(
+                  height: 120,
                   child: Container(
                     color: Colors.grey.shade50,
                     child: Image.network(
@@ -226,7 +225,7 @@ class _HeroTopCard extends StatelessWidget {
                       fit: BoxFit.contain,
                       errorBuilder: (_, __, ___) => Container(
                         color: Colors.grey.shade100,
-                        child: Icon(Icons.image, size: 48, color: Colors.grey.shade400),
+                        child: Icon(Icons.image, size: 40, color: Colors.grey.shade400),
                       ),
                       loadingBuilder: (context, child, progress) {
                         if (progress == null) return child;
@@ -235,82 +234,90 @@ class _HeroTopCard extends StatelessWidget {
                     ),
                   ),
                 ),
-                Container(
-                  color: Colors.grey.shade100,
-                  padding: EdgeInsets.all(padding),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      if (product.badge != null && product.badge!.isNotEmpty)
-                        Padding(
-                          padding: const EdgeInsets.only(bottom: 6),
-                          child: Text(
-                            product.badge!,
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: AppTheme.gold,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ),
-                      Text(
-                        product.name,
-                        style: TextStyle(
-                          fontSize: titleSize,
-                          fontWeight: FontWeight.bold,
-                          color: AppTheme.charcoal,
-                          letterSpacing: -0.5,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        product.description,
-                        style: TextStyle(
-                          fontSize: descSize,
-                          color: Colors.grey.shade700,
-                          height: 1.4,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                      const SizedBox(height: 12),
-                      Row(
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: EdgeInsets.all(padding * 0.75),
+                    child: Container(
+                      color: Colors.grey.shade100,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisSize: MainAxisSize.min,
                         children: [
-                          Text(
-                            '\$${product.finalPrice.toStringAsFixed(0)}',
-                            style: TextStyle(
-                              fontSize: priceSize,
-                              fontWeight: FontWeight.bold,
-                              color: AppTheme.gold,
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          SizedBox(
-                            height: 40,
-                            child: ElevatedButton(
-                              onPressed: onView,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: AppTheme.charcoal,
-                                foregroundColor: Colors.white,
+                          if (product.badge != null && product.badge!.isNotEmpty)
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 4),
+                              child: Text(
+                                product.badge!,
+                                style: TextStyle(
+                                  fontSize: 11,
+                                  color: AppTheme.gold,
+                                  fontWeight: FontWeight.w600,
+                                ),
                               ),
-                              child: const Text('View'),
+                            ),
+                          Text(
+                            product.name,
+                            style: TextStyle(
+                              fontSize: titleSize,
+                              fontWeight: FontWeight.bold,
+                              color: AppTheme.charcoal,
+                              letterSpacing: -0.5,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            product.description,
+                            style: TextStyle(
+                              fontSize: descSize,
+                              color: Colors.grey.shade700,
+                              height: 1.3,
+                            ),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          const SizedBox(height: 10),
+                          Row(
+                            children: [
+                              Text(
+                                '\$${product.finalPrice.toStringAsFixed(0)}',
+                                style: TextStyle(
+                                  fontSize: priceSize,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppTheme.gold,
+                                ),
+                              ),
+                              const SizedBox(width: 10),
+                              SizedBox(
+                                height: 36,
+                                child: ElevatedButton(
+                                  onPressed: onView,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppTheme.charcoal,
+                                    foregroundColor: Colors.white,
+                                  ),
+                                  child: const Text('View'),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          TextButton(
+                            onPressed: onGoToCatalog,
+                            style: TextButton.styleFrom(
+                              padding: EdgeInsets.zero,
+                              minimumSize: Size.zero,
+                              tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                            ),
+                            child: Text(
+                              'GO TO CATALOG',
+                              style: TextStyle(fontSize: 12, color: AppTheme.charcoal),
                             ),
                           ),
                         ],
                       ),
-                      const SizedBox(height: 8),
-                      TextButton(
-                        onPressed: onGoToCatalog,
-                        style: TextButton.styleFrom(
-                          padding: EdgeInsets.zero,
-                          minimumSize: Size.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                        ),
-                        child: const Text('GO TO CATALOG'),
-                      ),
-                    ],
+                    ),
                   ),
                 ),
               ],
@@ -543,98 +550,103 @@ class _CompactProductCard extends StatelessWidget {
             ),
             Expanded(
               flex: 3,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(12, 8, 12, 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
+              child: LayoutBuilder(
+                builder: (context, constraints) {
+                  final isNarrowCard = constraints.maxWidth < 200 || constraints.maxHeight < 90;
+                  final padH = isNarrowCard ? 8.0 : 12.0;
+                  final padV = isNarrowCard ? 6.0 : 8.0;
+                  return Padding(
+                    padding: EdgeInsets.fromLTRB(padH, padV, padH, padV),
+                    child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        if (product.categoryDisplay.isNotEmpty)
-                          Text(
-                            product.categoryDisplay,
-                            style: TextStyle(
-                              fontSize: 11,
-                              color: AppTheme.gold,
-                              fontWeight: FontWeight.w600,
-                            ),
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        if (product.categoryDisplay.isNotEmpty) const SizedBox(height: 2),
-                        Text(
-                          product.name,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 13,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 2),
-                        Text(
-                          product.description,
-                          style: TextStyle(
-                            fontSize: 11,
-                            color: Colors.grey.shade600,
-                          ),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ],
-                    ),
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Row(
-                          crossAxisAlignment: CrossAxisAlignment.baseline,
-                          textBaseline: TextBaseline.alphabetic,
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Text(
-                              '\$${product.finalPrice.toStringAsFixed(0)}',
-                              style: const TextStyle(
-                                fontWeight: FontWeight.bold,
-                                fontSize: 15,
-                                color: AppTheme.gold,
-                              ),
-                            ),
-                            if (product.discount > 0) ...[
-                              const SizedBox(width: 6),
+                            if (product.categoryDisplay.isNotEmpty && !isNarrowCard)
                               Text(
-                                '\$${product.price.toStringAsFixed(0)}',
+                                product.categoryDisplay,
                                 style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.grey.shade500,
-                                  decoration: TextDecoration.lineThrough,
+                                  fontSize: 10,
+                                  color: AppTheme.gold,
+                                  fontWeight: FontWeight.w600,
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                            ],
-                          ],
-                        ),
-                        if (product.ratings != null) ...[
-                          const SizedBox(height: 2),
-                          Row(
-                            children: [
-                              Icon(Icons.star_rounded, size: 12, color: Colors.amber.shade700),
-                              const SizedBox(width: 2),
+                            if (product.categoryDisplay.isNotEmpty && !isNarrowCard) const SizedBox(height: 2),
+                            Text(
+                              product.name,
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: isNarrowCard ? 12 : 13,
+                              ),
+                              maxLines: isNarrowCard ? 1 : 2,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                            if (!isNarrowCard) const SizedBox(height: 2),
+                            if (!isNarrowCard)
                               Text(
-                                product.ratings!.toStringAsFixed(1),
+                                product.description,
                                 style: TextStyle(
                                   fontSize: 11,
                                   color: Colors.grey.shade600,
                                 ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                          ],
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Row(
+                              crossAxisAlignment: CrossAxisAlignment.baseline,
+                              textBaseline: TextBaseline.alphabetic,
+                              children: [
+                                Text(
+                                  '\$${product.finalPrice.toStringAsFixed(0)}',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                    fontSize: isNarrowCard ? 13 : 15,
+                                    color: AppTheme.gold,
+                                  ),
+                                ),
+                                if (product.discount > 0 && !isNarrowCard) ...[
+                                  const SizedBox(width: 6),
+                                  Text(
+                                    '\$${product.price.toStringAsFixed(0)}',
+                                    style: TextStyle(
+                                      fontSize: 10,
+                                      color: Colors.grey.shade500,
+                                      decoration: TextDecoration.lineThrough,
+                                    ),
+                                  ),
+                                ],
+                              ],
+                            ),
+                            if (product.ratings != null && !isNarrowCard) ...[
+                              const SizedBox(height: 2),
+                              Row(
+                                children: [
+                                  Icon(Icons.star_rounded, size: 10, color: Colors.amber.shade700),
+                                  const SizedBox(width: 2),
+                                  Text(
+                                    product.ratings!.toStringAsFixed(1),
+                                    style: TextStyle(fontSize: 10, color: Colors.grey.shade600),
+                                  ),
+                                ],
                               ),
                             ],
-                          ),
-                        ],
+                          ],
+                        ),
                       ],
                     ),
-                  ],
-                ),
+                  );
+                },
               ),
             ),
           ],
